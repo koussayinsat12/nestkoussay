@@ -4,6 +4,7 @@ import { TdodService } from './tdod.service';
 @Global()
 @Module({
   controllers: [TdodController],
-  providers: [TdodService]
+  providers: [TdodService],
+  exports:[TdodService]
 })
 export class TdodModule {}

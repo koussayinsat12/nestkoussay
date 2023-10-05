@@ -1,4 +1,4 @@
-import { Body, Controller,Delete,Get, Param, Post, Query, Req, Res } from '@nestjs/common';
+import { Body, Controller,Delete,Get, Inject, Param, Post, Query, Req, Res } from '@nestjs/common';
 import { response } from 'express';
 import { Tdod } from './entities/tdod.entity';
 import { NotFoundError } from 'rxjs';
@@ -10,13 +10,14 @@ import { TdodService } from './tdod.service';
 export class TdodController {
     constructor(
         private todoService:TdodService
+        ,@Inject('UUID') private readonly generate
     ){
     }
     @Get()
     getTodos(
         @Query() mesquery:GetPaginatedTodoDto
     ){  
-        console.log(mesquery)
+        console.log(this.generate())
         return this.todoService.getTodos();
     }
     @Get('/:id')
