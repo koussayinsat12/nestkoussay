@@ -2,29 +2,28 @@ import { Body, Controller,Delete,Get, Param, Post, Query, Req, Res } from '@nest
 import { response } from 'express';
 import { Tdod } from './entities/tdod.entity';
 import { NotFoundError } from 'rxjs';
+import { GetPaginatedTodoDto } from './dto/get-paginated-todo.dto';
+import { AddTodoDto } from './dto/add-todo.dto';
+import { TdodService } from './tdod.service';
 
 @Controller('tdod')
 export class TdodController {
-    constructor(){
-        this.tdodos=[];
+    constructor(
+        private todoService:TdodService
+    ){
     }
-    tdodos:Tdod[];
     @Get()
     getTodos(
-        @Query() mesquery
+        @Query() mesquery:GetPaginatedTodoDto
     ){  
         console.log(mesquery)
-        return this.tdodos;
+        return this.todoService.getTodos();
     }
     @Get('/:id')
     getTodosbyid(
         @Param('id') id
     ){
-        const todo = this.tdodos.find((actualtodo) => actualtodo.id === +id);
-        if (todo) {
-            return todo;
-        }
-        throw new NotFoundError(`Le todo d'ID ${id} n'existe pas`);
+       return this.todoService.getTodoById(+id);
     }
     
     @Delete()
@@ -34,17 +33,11 @@ export class TdodController {
     }
     @Post()
     addTodos(
-        @Body() newTdodo: Tdod
+        @Body() newTdodo: AddTodoDto
 
-    ){
-        if (this.tdodos.length){
-            newTdodo.id=this.tdodos[this.tdodos.length-1].id+1;        }
-        else{
-            newTdodo.id=1;
-        }
-        this.tdodos.push(newTdodo);
+    ){  
 
-        return "Added Todos";
+        return this.todoService.addTodo(newTdodo);
 
-    }
-}
+    
+}}
